@@ -1,0 +1,7 @@
+streamlit
+pandas
+pdf2docx
+python-docx
+docx2pdf
+Pillow
+moviepy
