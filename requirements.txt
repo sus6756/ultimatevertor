@@ -1,7 +1,9 @@
 streamlit
-pandas
 pdf2docx
 python-docx
-docx2pdf
-Pillow
-moviepy
+pillow
+pandas
+openpyxl
+moviepy==1.0.3
+imageio
+imageio-ffmpeg
