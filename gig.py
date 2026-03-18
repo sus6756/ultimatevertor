@@ -32,7 +32,7 @@ tab1, tab2, tab3, tab4, tab5 = st.tabs([
     "📄 Documents", "🖼️ Images", "📊 Data", "🎥 Video", "🎵 Audio"
 ])
 
-# ===== HELPER FUNCTION =====
+# ===== HELPER =====
 def save_temp_file(uploaded_file):
     ext = uploaded_file.name.split(".")[-1]
     temp = tempfile.NamedTemporaryFile(delete=False, suffix=f".{ext}")
@@ -62,10 +62,21 @@ with tab1:
 
                     elif option == "DOCX to PDF":
                         subprocess.run([
-                            "soffice","--headless","--convert-to","pdf",
-                            file_path,"--outdir","."
+                            "soffice",
+                            "--headless",
+                            "--convert-to", "pdf",
+                            file_path,
+                            "--outdir", "/tmp"
                         ], check=True)
-                        output = file_path.replace(".docx",".pdf")
+
+                        output = os.path.join(
+                            "/tmp",
+                            os.path.basename(file_path).replace(".docx", ".pdf")
+                        )
+
+                        if not os.path.exists(output):
+                            st.error("❌ Conversion failed. File not created.")
+                            st.stop()
 
                     elif option == "TXT to DOCX":
                         doc = Document()
@@ -81,7 +92,11 @@ with tab1:
                         st.stop()
 
                     with open(output,"rb") as f:
-                        st.download_button("📥 Download", f, file_name=f"{base_name}_converted.{output.split('.')[-1]}")
+                        st.download_button(
+                            "📥 Download",
+                            f,
+                            file_name=f"{base_name}_converted.{output.split('.')[-1]}"
+                        )
 
                     st.success("✅ Done")
 
@@ -126,14 +141,18 @@ with tab3:
                 df.to_csv(output,index=False)
 
             with open(output,"rb") as f:
-                st.download_button("📥 Download", f, file_name=f"{base_name}.{output.split('.')[-1]}")
+                st.download_button(
+                    "📥 Download",
+                    f,
+                    file_name=f"{base_name}.{output.split('.')[-1]}"
+                )
 
 # ================= VIDEO =================
 with tab4:
     st.subheader("🎥 Video Converter")
 
     if not VIDEO_ENABLED:
-        st.error("🚫 Video not supported on this server")
+        st.warning("⚠️ Video conversion disabled on cloud")
     else:
         uploaded_file = st.file_uploader("Upload Video", type=["mp4","avi","mov"])
         format_choice = st.selectbox("Convert to", ["mp4","avi","mov"])
@@ -154,7 +173,7 @@ with tab5:
     st.subheader("🎵 Audio Converter")
 
     if not VIDEO_ENABLED:
-        st.error("🚫 Audio not supported on this server")
+        st.warning("⚠️ Audio conversion disabled on cloud")
     else:
         uploaded_file = st.file_uploader("Upload Audio", type=["mp3","wav"])
         format_choice = st.selectbox("Convert to", ["mp3","wav"])
