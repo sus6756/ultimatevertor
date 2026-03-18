@@ -5,7 +5,7 @@ import subprocess
 from pdf2docx import Converter
 from docx import Document
 from PIL import Image
-from moviepy import VideoFileClip, AudioFileClip
+from moviepy.editor import VideoFileClip, AudioFileClip
 
 st.set_page_config(page_title="Ultimate Converter", layout="wide")
 
